@@ -1,7 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace FIAPCloudGames.Domain.ValueObjects
 {
+    [Owned]
     public class Email
     {
         public string Value { get; private set; }

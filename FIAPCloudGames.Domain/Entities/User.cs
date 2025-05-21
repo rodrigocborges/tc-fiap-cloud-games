@@ -1,9 +1,10 @@
 ﻿using FIAPCloudGames.Domain.Enumerators;
+using FIAPCloudGames.Domain.Interfaces;
 using FIAPCloudGames.Domain.ValueObjects;
 
 namespace FIAPCloudGames.Domain.Entities
 {
-    public class User
+    public class User : IEntity
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
@@ -12,6 +13,11 @@ namespace FIAPCloudGames.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public UserRole Role { get; private set; }
+
+        public User()
+        {
+            
+        }
 
         public User(string name, Email email, Password password, UserRole role = UserRole.Customer)
         {

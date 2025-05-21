@@ -1,5 +1,8 @@
-﻿namespace FIAPCloudGames.Domain.ValueObjects
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace FIAPCloudGames.Domain.ValueObjects
 {
+    [Owned]
     public class Password
     {
         public string Hash { get; private set; }

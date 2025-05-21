@@ -1,7 +1,9 @@
-﻿using System.Globalization;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace FIAPCloudGames.Domain.ValueObjects
 {
+    [Owned]
     public class Price
     {
         public decimal Value { get; private set; }
