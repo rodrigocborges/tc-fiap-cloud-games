@@ -78,4 +78,11 @@ dotnet add FIAPCloudGames.API package Swashbuckle.AspNetCore
 dotnet add FIAPCloudGames.API package Microsoft.AspNetCore.Authentication.JwtBearer
 dotnet add FIAPCloudGames.API package Microsoft.EntityFrameworkCore.Design
 ```  
+
+Já que estou usando uma solução com vários projetos, o comando para rodar migrations é um pouco "diferente":
+```bash
+dotnet ef migrations add NomeDaMigration --project FIAPCloudGames.Infrastructure --startup-project FIAPCloudGames.API
+
+dotnet ef database update --project FIAPCloudGames.Infrastructure --startup-project FIAPCloudGames.API
+```
 </details>
