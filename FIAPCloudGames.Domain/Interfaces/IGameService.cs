@@ -2,7 +2,7 @@
 
 namespace FIAPCloudGames.Domain.Interfaces
 {
-    public interface IGameRepository : ICreate<Game>, IUpdate<Game>, IFind<Game>, 
+    public interface IGameService : ICreate<Game>, IUpdate<Game>, IFind<Game>, 
         IFindAll<Game>, IDelete<Game>
     {
     }

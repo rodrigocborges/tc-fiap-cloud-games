@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FIAPCloudGames.Infrastructure.Repositories
 {
-    internal class GameRepository : IGameRepository<Game>
+    public class GameRepository : IGameRepository
     {
         private readonly AppDbContext _context;
         public GameRepository(AppDbContext context)
