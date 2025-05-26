@@ -7,7 +7,7 @@ namespace FIAPCloudGames.Domain.ValueObjects
     {
         public string Hash { get; private set; }
 
-        public Password() { } //EF exige para dar bind nesse value object
+        private Password() { } //EF exige para dar bind nesse value object
 
         public Password(string password)
         {
@@ -16,6 +16,8 @@ namespace FIAPCloudGames.Domain.ValueObjects
 
             Hash = BCrypt.Net.BCrypt.HashPassword(password);
         }
+
+        public bool IsEqual(string plainTextPassword) => BCrypt.Net.BCrypt.Verify(plainTextPassword, Hash);
 
         private bool IsValid(string password) =>
             password.Length >= 8 &&

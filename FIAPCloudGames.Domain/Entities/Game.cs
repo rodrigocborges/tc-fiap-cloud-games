@@ -14,9 +14,7 @@ namespace FIAPCloudGames.Domain.Entities
         public DateTime ReleaseDate { get; private set; }
         public DateTime LastUpdate { get; private set; }
 
-        public Game()
-        {
-        }
+        private Game() { }
 
         public Game(string name, string? description, Price price, GameCategory category, DateTime releaseDate)
         {

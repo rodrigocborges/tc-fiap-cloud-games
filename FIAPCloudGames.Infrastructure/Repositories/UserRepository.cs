@@ -35,6 +35,9 @@ namespace FIAPCloudGames.Infrastructure.Repositories
         public async Task<ICollection<User>?> FindAll(int skip = 0, int take = 10)
             => await _context.Users.Skip(skip).Take(take).ToListAsync();
 
+        public async Task<User?> FindByEmail(string email)
+            => await _context.Users.FirstOrDefaultAsync(x => x.Email.Value == email);
+
         public async Task Update(User model)
         {
             _context.Users.Update(model);

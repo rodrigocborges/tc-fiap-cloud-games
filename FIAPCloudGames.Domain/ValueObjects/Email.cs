@@ -8,7 +8,7 @@ namespace FIAPCloudGames.Domain.ValueObjects
     {
         public string Value { get; private set; }
 
-        public Email() { } //EF exige para dar bind nesse value object
+        private Email() { } //EF exige para dar bind nesse value object
 
         public Email(string value)
         {

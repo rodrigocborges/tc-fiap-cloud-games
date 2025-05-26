@@ -22,6 +22,21 @@ namespace FIAPCloudGames.Application.Services
         public async Task<ICollection<User>?> FindAll(int skip = 0, int take = 10)
             => await _repository.FindAll(skip, take);
 
+        public async Task<User?> FindByEmail(string email)
+            => await _repository.FindByEmail(email);
+
+        public async Task<User?> Login(string email, string password)
+        {
+            User? userFound = await FindByEmail(email: email);
+            if (userFound == null)
+                return null;
+
+            if(!userFound.Password.IsEqual(password))
+                return null;
+
+            return userFound;
+        }
+
         public async Task Update(User model)
             => await _repository.Update(model);
     }

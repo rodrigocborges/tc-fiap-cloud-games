@@ -14,17 +14,14 @@ namespace FIAPCloudGames.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
         public UserRole Role { get; private set; }
 
-        public User()
-        {
-            
-        }
+        private User() { }
 
-        public User(string name, Email email, Password password, UserRole role = UserRole.Customer)
+        public User(string name, string email, string password, UserRole role = UserRole.Customer)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Email = email;
-            Password = password;
+            Email = new Email(email);
+            Password = new Password(password);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
             Role = role;
