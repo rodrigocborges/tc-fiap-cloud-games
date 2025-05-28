@@ -10,7 +10,8 @@ var app = builder.Build();
 app.UseServices();
 
 app
-    .MapUserEndpoints();
+    .MapUserEndpoints()
+    .MapGameEndpoints();
 
 app.Run();
 

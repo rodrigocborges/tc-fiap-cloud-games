@@ -16,15 +16,53 @@ namespace FIAPCloudGames.Domain.Entities
 
         private Game() { }
 
-        public Game(string name, string? description, Price price, GameCategory category, DateTime releaseDate)
+        public Game(string name, string? description, decimal price, GameCategory category, DateTime releaseDate)
         {
             Id = Guid.NewGuid();
             Name = name;
             Description = description;
-            Price = price;
+            Price = new Price(price);
             Category = category;
             ReleaseDate = releaseDate;
             LastUpdate = DateTime.UtcNow;
+        }
+
+        public void Update(string? name, string? description, decimal? price, GameCategory? category, DateTime? releaseDate)
+        {
+            bool hasChanges = false;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name;
+                hasChanges = true;
+            }
+
+            if(!string.IsNullOrWhiteSpace(description))
+            {
+                Description = description;
+                hasChanges = true;
+            }
+
+            if (price != null)
+            {
+                Price = new Price(price.Value);
+                hasChanges = true;
+            }
+
+            if (category != null)
+            {
+                Category = category.Value;
+                hasChanges = true;
+            }
+
+            if (releaseDate != null)
+            {
+                ReleaseDate = releaseDate.Value;
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+                LastUpdate = DateTime.UtcNow;
         }
     }
 }
