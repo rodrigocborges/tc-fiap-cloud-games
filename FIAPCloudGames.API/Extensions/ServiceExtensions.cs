@@ -94,7 +94,7 @@ public static class ServiceExtensions
         }
 
         app.UseHttpsRedirection();
-
+        app.UseCustomExceptionHandling();
         app.UseAuthentication();
         app.UseAuthorization();
     }
