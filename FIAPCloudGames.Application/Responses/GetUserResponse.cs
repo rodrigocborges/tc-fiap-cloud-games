@@ -6,6 +6,6 @@ namespace FIAPCloudGames.Application.Responses
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public UserRole Role { get; set; }
+        public string Role { get; set; }
     }
 }

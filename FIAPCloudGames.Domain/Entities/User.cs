@@ -26,5 +26,36 @@ namespace FIAPCloudGames.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
             Role = role;
         }
+
+        public void Update(string? name, string? email, UserRole? role)
+        {
+            bool hasChanges = false;
+
+            if(!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name;
+                hasChanges = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                Email = new Email(email);
+                hasChanges = true;
+            }
+
+            if(role != null)
+            {
+                Role = role.Value;
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+                UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void UpdatePassword(string newPassword)
+        {
+            Password = new Password(newPassword);
+        }
     }
 }

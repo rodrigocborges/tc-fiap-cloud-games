@@ -1,8 +1,12 @@
 ﻿using FIAPCloudGames.API.Jwt;
 using FIAPCloudGames.Application.Requests;
 using FIAPCloudGames.Application.Responses;
+using FIAPCloudGames.Domain.Enumerators;
 using FIAPCloudGames.Domain.Interfaces;
+using FIAPCloudGames.SharedKernel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FIAPCloudGames.API.Endpoints;
 
@@ -30,7 +34,7 @@ public static class UserEndpoints
 
             var users = await service.FindAll(skip: skip, take: pageSize);
 
-            return Results.Ok(users?.Select(item => new GetUserResponse { Id = item.Id, Name = item.Name, Role = item.Role }));
+            return Results.Ok(users?.Select(item => new GetUserResponse { Id = item.Id, Name = item.Name, Role = item.Role.GetDescription() }));
         }).RequireAuthorization("AdminOnly");
 
         group.MapGet("/{id:guid}", async (IUserService service, [FromRoute] Guid id) => {
@@ -39,7 +43,7 @@ public static class UserEndpoints
             if (user == null)
                 return Results.NotFound();
 
-            return Results.Ok(new GetUserResponse { Id = user.Id, Name = user.Name, Role = user.Role });
+            return Results.Ok(new GetUserResponse { Id = user.Id, Name = user.Name, Role = user.Role.GetDescription() });
         }).RequireAuthorization("AdminOnly");
 
         group.MapDelete("/{id:guid}", async (IUserService service, [FromRoute] Guid id) => {
@@ -68,8 +72,62 @@ public static class UserEndpoints
                 role: request.Role
             ));
 
-            return Results.Ok(new GetUserResponse { Id = id, Name = request.Name, Role = request.Role });
+            return Results.Ok(new GetUserResponse { Id = id, Name = request.Name, Role = request.Role.GetDescription() });
         }).RequireAuthorization("AdminOnly");
+        
+        group.MapPatch("/{id:guid}", async (IUserService service, [FromRoute] Guid id, [FromBody] UpdateUserRequest request, HttpContext httpContext) => {
+            if (request == null)
+                return Results.BadRequest(new GenericMessageResponse { Message = "Invalid body" });
+
+            var userIdFromToken = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleFromToken = httpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (!Guid.TryParse(userIdFromToken, out var loggedUserId))
+                return Results.Unauthorized();
+
+            // Se o usuário logado for Customer (0) e estiver tentando editar outro usuário, nega
+            if (roleFromToken == UserRole.Customer.ToString() && id != loggedUserId)
+                return Results.Forbid();
+
+            var userFound = await service.Find(id: id);
+            if (userFound == null)
+                return Results.BadRequest(new GenericMessageResponse { Message = "User not found!" });
+
+            userFound.Update(
+                name: request.Name,
+                email: request.Email,
+                role: request.Role
+            );
+
+            await service.Update(userFound);
+
+            return Results.Ok();
+        }).RequireAuthorization();
+
+        group.MapPatch("/update-password/{id:guid}", async (IUserService service, [FromRoute] Guid id, [FromBody] UpdateUserPasswordRequest request, HttpContext httpContext) => {
+            if (request == null)
+                return Results.BadRequest(new GenericMessageResponse { Message = "Invalid body" });
+
+            var userIdFromToken = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleFromToken = httpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (!Guid.TryParse(userIdFromToken, out var loggedUserId))
+                return Results.Unauthorized();
+
+            // Se o usuário logado for Customer (0) e estiver tentando editar outro usuário, nega
+            if (roleFromToken == UserRole.Customer.ToString() && id != loggedUserId)
+                return Results.Forbid();
+
+            var userFound = await service.Find(id: id);
+            if (userFound == null)
+                return Results.BadRequest(new GenericMessageResponse { Message = "User not found!" });
+
+            userFound.UpdatePassword(newPassword: request.Password);
+
+            await service.Update(userFound);
+
+            return Results.Ok();
+        }).RequireAuthorization();
 
         group.MapPost("/login", async (IConfiguration config, IUserService service, [FromBody] UserLoginRequest request) => {
             if (request == null)
