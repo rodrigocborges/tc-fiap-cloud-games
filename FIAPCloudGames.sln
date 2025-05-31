@@ -15,11 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAPCloudGames.SharedKernel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIAPCloudGames.Tests", "FIAPCloudGames.Tests\FIAPCloudGames.Tests.csproj", "{C37131ED-C118-45B0-A8D9-F092D6002B38}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{A5256D23-C6F4-4EA1-85D5-91DF279AF7EA}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Users\rodri\Downloads\demo_database.gif = ..\..\..\Users\rodri\Downloads\demo_database.gif
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

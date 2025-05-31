@@ -110,5 +110,10 @@ Com isso, demonstrei que a funcionalidade foi construída com base em TDD, orien
 
 _Vale ressaltar que para isso, eu criei um repositório em memória chamado InMemoryUserRepository._
 
+## Visualização do banco de dados no Supabase
+Resolvi criar essa demonstração de como está o banco de dados em PostgreSQL, após a criação via migrations e inserção de dados usando os endpoints:
+
+![](https://s14.gifyu.com/images/bxvWB.gif)
+
 ## Links
 - Link do diagrama do Event Storming: https://drive.google.com/file/d/1jkNFj9CuH-e0h5yEg13T9t7zMnOurY5L/view?usp=sharing (caso fique ruim a visualização, disponibilizei uma imagem PNG de alta resolução https://drive.google.com/file/d/1S1eaRvYbELy1IGKgYbXT7jXZvY-pGg_t/view?usp=sharing) 
