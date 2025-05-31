@@ -17,8 +17,6 @@ public static class UserEndpoints
     {
         var group = app.MapGroup("/users");
 
-        //TODO: Fazer método de edição
-
         group.MapGet("/", async (IUserService service, [FromQuery] int page = 1, [FromQuery] int pageSize = 10) => {
 
             if (page <= 0)
