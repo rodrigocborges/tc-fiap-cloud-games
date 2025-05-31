@@ -58,21 +58,24 @@ public static class UserEndpoints
         }).RequireAuthorization("AdminOnly");
 
         group.MapPost("/", async (IUserService service, [FromBody] CreateUserRequest request) => {
-            if (request == null)
-                return Results.BadRequest(new GenericMessageResponse { Message = "Invalid body" });
+            try
+            {
+                if (request == null)
+                    throw new InvalidOperationException("Invalid body");
 
-            var userFound = await service.FindByEmail(email: request.Email);
-            if(userFound != null)
-                return Results.BadRequest(new GenericMessageResponse { Message = "User is already exists!" });
+                Guid id = await service.Create(new Domain.Entities.User(
+                    name: request.Name,
+                    email: request.Email,
+                    password: request.Password,
+                    role: request.Role
+                ));
 
-            Guid id = await service.Create(new Domain.Entities.User(
-                name: request.Name,
-                email: request.Email,
-                password: request.Password,
-                role: request.Role
-            ));
+                return Results.Ok(new GetUserResponse { Id = id, Name = request.Name, Role = request.Role.GetDescription() });
+            }
+            catch (Exception ex) {
+                return Results.BadRequest(new GenericMessageResponse { Message = ex.Message });
+            }
 
-            return Results.Ok(new GetUserResponse { Id = id, Name = request.Name, Role = request.Role.GetDescription() });
         }).RequireAuthorization("AdminOnly");
         
         group.MapPatch("/{id:guid}", async (IUserService service, [FromRoute] Guid id, [FromBody] UpdateUserRequest request, HttpContext httpContext) => {

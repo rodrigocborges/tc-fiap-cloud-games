@@ -11,7 +11,13 @@ namespace FIAPCloudGames.Application.Services
             _repository = repository;
         }
         public async Task<Guid> Create(User model)
-            => await _repository.Create(model);
+        {
+            var userFound = await FindByEmail(email: model.Email.Value);
+            if (userFound != null)
+                throw new InvalidOperationException("User is already exists!");
+
+            return await _repository.Create(model);
+        }
 
         public async Task Delete(Guid id)
             => await _repository.Delete(id);
