@@ -1,0 +1,63 @@
+name: 'CD - Build, Push and Deploy to Azure'
+
+# Gatilho: Executa apenas quando há um merge ou push para a branch 'master'. 
+on:
+  push:
+    branches:
+      - master
+
+# Variaveis de ambiente
+env:
+  AZURE_WEBAPP_NAME: 'tc-fiap-cloud-games-rodrigo'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  ACR_LOGIN_SERVER: 'acrfiaprodrigoborges.azurecr.io'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pega o código do seu repositório.
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      # Autentica no Azure
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Autentica no Azure Container Registry (ACR).
+      - name: 'Login to ACR'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # Constrói a imagem Docker e envia para o ACR
+      # A tag da imagem será o ID do commit, garantindo uma versão única.
+      - name: 'Build and Push Docker Image'
+        run: |
+          docker build . -f Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}
+          docker push ${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}
+
+      # Faz o deploy da nova imagem no Azure App Service. 
+      # Este passo informa ao App Service para usar a nova imagem que acabamos de enviar.
+      - name: 'Deploy to Azure App Service'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          images: '${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}'
+          app-settings-json: |
+          [
+            { "name": "ConnectionStrings__Main", "value": "${{ secrets.DATABASE_CONNECTION_STRING }}", "slotSetting": false },
+            { "name": "Jwt__Key", "value": "${{ secrets.JWT_KEY }}", "slotSetting": false },
+            { "name": "Jwt__Issuer", "value": "${{ secrets.JWT_ISSUER }}", "slotSetting": false },
+            { "name": "Jwt__Audience", "value": "${{ secrets.JWT_AUDIENCE }}", "slotSetting": false },
+            { "name": "Jwt__ExpiresInMinutes", "value": "JWT_EXPIRE_MINUTES", "slotSetting": false }
+          ]
+      # Faz logout do Azure.
+      - name: Logout from Azure
+        run: |
+          az logout
