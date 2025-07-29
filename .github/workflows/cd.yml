@@ -54,7 +54,7 @@ jobs:
         with:
           inlineScript: |
             az webapp config appsettings set --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --settings \
-            "ConnectionStrings__Main=${{ secrets.PRODUCTION_CONNECTION_STRING }}" \
+            "ConnectionStrings__Main=${{ secrets.DATABASE_CONNECTION_STRING }}" \
             "Jwt__Key=${{ secrets.JWT_KEY }}" \
             "Jwt__Issuer=${{ secrets.JWT_ISSUER }}" \
             "Jwt__Audience=${{ secrets.JWT_AUDIENCE }}" \
