@@ -9,8 +9,9 @@ on:
 # Variaveis de ambiente
 env:
   AZURE_WEBAPP_NAME: 'tc-fiap-cloud-games-rodrigo'
-  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  AZURE_RESOURCE_GROUP: 'estudos-fiap'
   ACR_LOGIN_SERVER: 'acrfiaprodrigoborges.azurecr.io'
+  IMAGE_NAME: 'tcfiapcloudgamesrodrigo'
 
 jobs:
   build_and_deploy:
@@ -39,25 +40,26 @@ jobs:
       # A tag da imagem será o ID do commit, garantindo uma versão única.
       - name: 'Build and Push Docker Image'
         run: |
-          docker build . -f Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}
-          docker push ${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}
+          docker build . -f Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      # Faz o deploy da nova imagem no Azure App Service. 
-      # Este passo informa ao App Service para usar a nova imagem que acabamos de enviar.
       - name: 'Deploy to Azure App Service'
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          images: '${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}'
-          app-settings-json: |
-            [
-              { "name": "ConnectionStrings__Main", "value": "${{ secrets.DATABASE_CONNECTION_STRING }}", "slotSetting": false },
-              { "name": "Jwt__Key", "value": "${{ secrets.JWT_KEY }}", "slotSetting": false },
-              { "name": "Jwt__Issuer", "value": "${{ secrets.JWT_ISSUER }}", "slotSetting": false },
-              { "name": "Jwt__Audience", "value": "${{ secrets.JWT_AUDIENCE }}", "slotSetting": false },
-              { "name": "Jwt__ExpiresInMinutes", "value": "JWT_EXPIRE_MINUTES", "slotSetting": false }
-            ]
-      # Faz logout do Azure.
-      - name: Logout from Azure
+          images: '${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
+
+      - name: 'Set App Settings'
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp config appsettings set --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --settings \
+            "ConnectionStrings__Main=${{ secrets.PRODUCTION_CONNECTION_STRING }}" \
+            "Jwt__Key=${{ secrets.JWT_KEY }}" \
+            "Jwt__Issuer=${{ secrets.JWT_ISSUER }}" \
+            "Jwt__Audience=${{ secrets.JWT_AUDIENCE }}" \
+            "Jwt__ExpiresInMinutes=${{ secrets.JWT_EXPIRE_MINUTES }}"
+
+      - name: 'Logout from Azure'
         run: |
           az logout
