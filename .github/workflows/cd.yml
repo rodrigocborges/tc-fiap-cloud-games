@@ -50,13 +50,13 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           images: '${{ env.ACR_LOGIN_SERVER }}/tcfiapcloudgamesrodrigoborges:${{ github.sha }}'
           app-settings-json: |
-          [
-            { "name": "ConnectionStrings__Main", "value": "${{ secrets.DATABASE_CONNECTION_STRING }}", "slotSetting": false },
-            { "name": "Jwt__Key", "value": "${{ secrets.JWT_KEY }}", "slotSetting": false },
-            { "name": "Jwt__Issuer", "value": "${{ secrets.JWT_ISSUER }}", "slotSetting": false },
-            { "name": "Jwt__Audience", "value": "${{ secrets.JWT_AUDIENCE }}", "slotSetting": false },
-            { "name": "Jwt__ExpiresInMinutes", "value": "JWT_EXPIRE_MINUTES", "slotSetting": false }
-          ]
+            [
+              { "name": "ConnectionStrings__Main", "value": "${{ secrets.DATABASE_CONNECTION_STRING }}", "slotSetting": false },
+              { "name": "Jwt__Key", "value": "${{ secrets.JWT_KEY }}", "slotSetting": false },
+              { "name": "Jwt__Issuer", "value": "${{ secrets.JWT_ISSUER }}", "slotSetting": false },
+              { "name": "Jwt__Audience", "value": "${{ secrets.JWT_AUDIENCE }}", "slotSetting": false },
+              { "name": "Jwt__ExpiresInMinutes", "value": "JWT_EXPIRE_MINUTES", "slotSetting": false }
+            ]
       # Faz logout do Azure.
       - name: Logout from Azure
         run: |
