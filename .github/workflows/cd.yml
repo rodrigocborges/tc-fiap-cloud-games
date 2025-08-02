@@ -40,7 +40,7 @@ jobs:
       # A tag da imagem será o ID do commit, garantindo uma versão única.
       - name: 'Build and Push Docker Image'
         run: |
-          docker build --build-arg NEWRELIC_KEY=${{ secrets.APM_NEWRELIC_KEY }} . -f Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker build . -f Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: 'Deploy to Azure App Service'
@@ -58,7 +58,9 @@ jobs:
             "Jwt__Key=${{ secrets.JWT_KEY }}" \
             "Jwt__Issuer=${{ secrets.JWT_ISSUER }}" \
             "Jwt__Audience=${{ secrets.JWT_AUDIENCE }}" \
-            "Jwt__ExpiresInMinutes=${{ secrets.JWT_EXPIRE_MINUTES }}"
+            "Jwt__ExpiresInMinutes=${{ secrets.JWT_EXPIRE_MINUTES }}" \
+            "NEW_RELIC_LICENSE_KEY=${{ secrets.APM_NEWRELIC_KEY }}" \
+            "NEW_RELIC_APP_NAME=TC FIAP CLOUD GAMES RODRIGO"
 
       - name: 'Logout from Azure'
         run: |
